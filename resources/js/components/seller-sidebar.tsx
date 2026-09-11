@@ -30,8 +30,8 @@ export function SellerSidebar() {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href={sellerDashboard.url()} prefetch>
-                                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md">
-                                    <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-amber-500 text-stone-950">
+                                    <AppLogoIcon className="size-5" />
                                 </div>
                                 <div className="ml-1 flex flex-col text-left text-sm leading-tight">
                                     <span className="truncate font-semibold tracking-tight">
