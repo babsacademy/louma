@@ -2,7 +2,7 @@
 
 @import 'tw-animate-css';
 
-@import 'leaflet/dist/leaflet.css';
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -181,6 +181,102 @@
     -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
     box-shadow: 0 0 0 1000px #ffffff inset;
     transition: background-color 5000s ease-in-out 0s;
+}
+
+.louma-map-marker {
+    display: flex;
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    border-radius: 9999px 9999px 9999px 0;
+    background: #f59e0b;
+    box-shadow: 0 3px 10px rgb(120 53 15 / 28%);
+    color: #1c1917;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transform: rotate(-45deg);
+}
+
+.louma-map-marker span {
+    transform: rotate(45deg);
+}
+
+.louma-map-marker:focus-visible {
+    outline: 3px solid #1c1917;
+    outline-offset: 3px;
+}
+
+.louma-map .maplibregl-ctrl-top-right {
+    top: 0.75rem;
+    right: 0.75rem;
+}
+
+.louma-map .maplibregl-ctrl-group {
+    overflow: hidden;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.625rem;
+    box-shadow: 0 1px 3px rgb(28 25 23 / 12%);
+}
+
+.louma-map .maplibregl-ctrl-group button {
+    width: 2rem;
+    height: 2rem;
+}
+
+.maplibregl-popup-content {
+    overflow: hidden;
+    border-radius: 0.75rem;
+    padding: 0;
+    box-shadow: 0 8px 24px rgb(28 25 23 / 18%);
+}
+
+.maplibregl-popup-close-button {
+    padding: 0.25rem 0.55rem;
+    color: #57534e;
+    font-size: 1.125rem;
+}
+
+.louma-map-popup {
+    min-width: 11rem;
+    padding: 0.9rem 1rem 1rem;
+}
+
+.louma-map-popup__zone {
+    margin: 0;
+    color: #1c1917;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.louma-map-popup__count {
+    margin: 0.2rem 0 0.55rem;
+    color: #57534e;
+    font-size: 0.75rem;
+}
+
+.louma-map-popup__shops {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.louma-map-popup__shop {
+    border-radius: 0.375rem;
+    padding: 0.3rem 0.4rem;
+    color: #a15200;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.louma-map-popup__shop:hover,
+.louma-map-popup__shop:focus-visible {
+    background: #fffbeb;
+    color: #78350f;
+    outline: none;
 }
 
 @layer base {

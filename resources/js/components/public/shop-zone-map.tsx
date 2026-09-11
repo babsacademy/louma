@@ -1,8 +1,6 @@
-import { Link } from '@inertiajs/react';
-import { divIcon } from 'leaflet';
+import { router } from '@inertiajs/react';
 import { MapPin, Store } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import type { PublicShop } from '@/types';
@@ -57,39 +55,60 @@ function coordinatesForZone(zone: string): Coordinates {
     ];
 }
 
-function MapViewport({ markers }: { markers: ZoneMarker[] }) {
-    const map = useMap();
-
-    useEffect(() => {
-        if (markers.length === 1) {
-            map.setView(markers[0].coordinates, 13);
-
-            return;
-        }
-
-        map.fitBounds(
-            markers.map((marker) => marker.coordinates),
-            {
-                padding: [32, 32],
-                maxZoom: 13,
-            },
-        );
-    }, [map, markers]);
-
-    return null;
+function toLngLat([latitude, longitude]: Coordinates): [number, number] {
+    return [longitude, latitude];
 }
 
-function markerIcon(shopCount: number) {
-    return divIcon({
-        className: 'louma-map-marker',
-        html: `<span>${shopCount}</span>`,
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40],
+function createMarkerElement(marker: ZoneMarker): HTMLButtonElement {
+    const element = document.createElement('button');
+    const label = document.createElement('span');
+    const shopLabel = marker.shops.length > 1 ? 'boutiques' : 'boutique';
+
+    element.type = 'button';
+    element.className = 'louma-map-marker';
+    element.setAttribute(
+        'aria-label',
+        `${marker.shops.length} ${shopLabel} disponible${marker.shops.length > 1 ? 's' : ''} à ${marker.zone}`,
+    );
+    label.textContent = String(marker.shops.length);
+    element.append(label);
+
+    return element;
+}
+
+function createPopupContent(marker: ZoneMarker): HTMLDivElement {
+    const content = document.createElement('div');
+    const heading = document.createElement('p');
+    const count = document.createElement('p');
+    const shopList = document.createElement('div');
+
+    content.className = 'louma-map-popup';
+    heading.className = 'louma-map-popup__zone';
+    heading.textContent = marker.zone;
+    count.className = 'louma-map-popup__count';
+    count.textContent = `${marker.shops.length} boutique${marker.shops.length > 1 ? 's' : ''} disponible${marker.shops.length > 1 ? 's' : ''}`;
+    shopList.className = 'louma-map-popup__shops';
+
+    marker.shops.forEach((shop) => {
+        const shopLink = document.createElement('a');
+
+        shopLink.href = shopsShow.url(shop.slug);
+        shopLink.className = 'louma-map-popup__shop';
+        shopLink.textContent = shop.name;
+        shopLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            router.visit(shopsShow.url(shop.slug));
+        });
+        shopList.append(shopLink);
     });
+
+    content.append(heading, count, shopList);
+
+    return content;
 }
 
 export default function ShopZoneMap({ shops }: { shops: PublicShop[] }) {
+    const mapContainer = useRef<HTMLDivElement>(null);
     const markers = useMemo<ZoneMarker[]>(() => {
         const shopsByZone = new Map<string, PublicShop[]>();
 
@@ -104,6 +123,81 @@ export default function ShopZoneMap({ shops }: { shops: PublicShop[] }) {
             shops: zoneShops,
         }));
     }, [shops]);
+
+    useEffect(() => {
+        if (!mapContainer.current || !markers.length) {
+            return;
+        }
+
+        let isDisposed = false;
+        let map: import('maplibre-gl').Map | undefined;
+
+        void import('maplibre-gl').then((maplibregl) => {
+            if (isDisposed || !mapContainer.current) {
+                return;
+            }
+
+            const mapInstance = new maplibregl.Map({
+                container: mapContainer.current,
+                style: 'https://tiles.openfreemap.org/styles/bright',
+                center: toLngLat(dakarCenter),
+                zoom: 12,
+            });
+            map = mapInstance;
+
+            mapInstance.addControl(
+                new maplibregl.NavigationControl(),
+                'top-right',
+            );
+            mapInstance.on('load', () => {
+                const bounds = new maplibregl.LngLatBounds();
+
+                markers.forEach((marker) => {
+                    const markerElement = createMarkerElement(marker);
+                    const popup = new maplibregl.Popup({
+                        closeButton: true,
+                        closeOnClick: true,
+                        offset: 24,
+                    }).setDOMContent(createPopupContent(marker));
+                    const mapMarker = new maplibregl.Marker({
+                        element: markerElement,
+                        anchor: 'bottom',
+                    })
+                        .setLngLat(toLngLat(marker.coordinates))
+                        .setPopup(popup)
+                        .addTo(mapInstance);
+
+                    markerElement.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            mapMarker.togglePopup();
+                        }
+                    });
+                    bounds.extend(toLngLat(marker.coordinates));
+                });
+
+                if (markers.length === 1) {
+                    mapInstance.jumpTo({
+                        center: toLngLat(markers[0].coordinates),
+                        zoom: 13,
+                    });
+
+                    return;
+                }
+
+                mapInstance.fitBounds(bounds, {
+                    padding: 48,
+                    maxZoom: 13,
+                    duration: 0,
+                });
+            });
+        });
+
+        return () => {
+            isDisposed = true;
+            map?.remove();
+        };
+    }, [markers]);
 
     if (!markers.length) {
         return null;
@@ -131,59 +225,12 @@ export default function ShopZoneMap({ shops }: { shops: PublicShop[] }) {
                     </Badge>
                 </div>
                 <div className="overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 shadow-sm">
-                    <MapContainer
-                        center={dakarCenter}
-                        zoom={12}
-                        scrollWheelZoom={false}
-                        className="h-80 w-full sm:h-[26.25rem] lg:h-[30rem]"
+                    <div
+                        ref={mapContainer}
+                        className="louma-map h-80 w-full sm:h-[26.25rem] lg:h-[30rem]"
+                        role="region"
                         aria-label="Carte des boutiques Louma Guinard à Dakar"
-                    >
-                        <TileLayer
-                            attribution={
-                                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            }
-                            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        <MapViewport markers={markers} />
-                        {markers.map((marker) => (
-                            <Marker
-                                key={marker.zone}
-                                position={marker.coordinates}
-                                icon={markerIcon(marker.shops.length)}
-                                alt={`Boutiques disponibles à ${marker.zone}`}
-                            >
-                                <Popup>
-                                    <div className="min-w-44 space-y-2 py-1">
-                                        <p className="flex items-center gap-1.5 font-semibold text-stone-950">
-                                            <MapPin className="size-4 text-amber-700" />
-                                            {marker.zone}
-                                        </p>
-                                        <p className="text-xs text-stone-600">
-                                            {marker.shops.length} boutique
-                                            {marker.shops.length > 1
-                                                ? 's'
-                                                : ''}{' '}
-                                            disponible
-                                            {marker.shops.length > 1 ? 's' : ''}
-                                        </p>
-                                        <div className="grid gap-1.5">
-                                            {marker.shops.map((shop) => (
-                                                <Link
-                                                    key={shop.id}
-                                                    href={shopsShow.url(
-                                                        shop.slug,
-                                                    )}
-                                                    className="rounded-md px-1 py-0.5 text-sm font-medium text-amber-800 transition-colors hover:bg-amber-50 hover:text-amber-950"
-                                                >
-                                                    {shop.name}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </Popup>
-                            </Marker>
-                        ))}
-                    </MapContainer>
+                    />
                 </div>
                 <div
                     className="mt-4 flex flex-wrap gap-2"
