@@ -132,71 +132,64 @@ export default function ShopZoneMap({ shops }: { shops: PublicShop[] }) {
         let isDisposed = false;
         let map: import('maplibre-gl').Map | undefined;
 
-        void import('maplibre-gl')
-            .then((maplibregl) => {
-                if (isDisposed || !mapContainer.current) {
-                    return;
-                }
+        void import('maplibre-gl').then((maplibregl) => {
+            if (isDisposed || !mapContainer.current) {
+                return;
+            }
 
-                const mapInstance = new maplibregl.Map({
-                    container: mapContainer.current,
-                    style: 'https://tiles.openfreemap.org/styles/bright',
-                    center: toLngLat(dakarCenter),
-                    zoom: 12,
-                });
-                map = mapInstance;
-
-                mapInstance.addControl(
-                    new maplibregl.NavigationControl(),
-                    'top-right',
-                );
-                const bounds = new maplibregl.LngLatBounds();
-
-                markers.forEach((marker) => {
-                    const markerElement = createMarkerElement(marker);
-                    const popup = new maplibregl.Popup({
-                        closeButton: true,
-                        closeOnClick: true,
-                        offset: 24,
-                    }).setDOMContent(createPopupContent(marker));
-                    const mapMarker = new maplibregl.Marker({
-                        element: markerElement,
-                        anchor: 'bottom',
-                    })
-                        .setLngLat(toLngLat(marker.coordinates))
-                        .setPopup(popup)
-                        .addTo(mapInstance);
-
-                    markerElement.addEventListener('keydown', (event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            mapMarker.togglePopup();
-                        }
-                    });
-                    bounds.extend(toLngLat(marker.coordinates));
-                });
-
-                if (markers.length === 1) {
-                    mapInstance.jumpTo({
-                        center: toLngLat(markers[0].coordinates),
-                        zoom: 13,
-                    });
-
-                    return;
-                }
-
-                mapInstance.fitBounds(bounds, {
-                    padding: 48,
-                    maxZoom: 13,
-                    duration: 0,
-                });
-            })
-            .catch((error: unknown) => {
-                console.error(
-                    'Impossible de charger la carte des boutiques.',
-                    error,
-                );
+            const mapInstance = new maplibregl.Map({
+                container: mapContainer.current,
+                style: 'https://tiles.openfreemap.org/styles/bright',
+                center: toLngLat(dakarCenter),
+                zoom: 12,
             });
+            map = mapInstance;
+
+            mapInstance.addControl(
+                new maplibregl.NavigationControl(),
+                'top-right',
+            );
+            const bounds = new maplibregl.LngLatBounds();
+
+            markers.forEach((marker) => {
+                const markerElement = createMarkerElement(marker);
+                const popup = new maplibregl.Popup({
+                    closeButton: true,
+                    closeOnClick: true,
+                    offset: 24,
+                }).setDOMContent(createPopupContent(marker));
+                const mapMarker = new maplibregl.Marker({
+                    element: markerElement,
+                    anchor: 'bottom',
+                })
+                    .setLngLat(toLngLat(marker.coordinates))
+                    .setPopup(popup)
+                    .addTo(mapInstance);
+
+                markerElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        mapMarker.togglePopup();
+                    }
+                });
+                bounds.extend(toLngLat(marker.coordinates));
+            });
+
+            if (markers.length === 1) {
+                mapInstance.jumpTo({
+                    center: toLngLat(markers[0].coordinates),
+                    zoom: 13,
+                });
+
+                return;
+            }
+
+            mapInstance.fitBounds(bounds, {
+                padding: 48,
+                maxZoom: 13,
+                duration: 0,
+            });
+        });
 
         return () => {
             isDisposed = true;
