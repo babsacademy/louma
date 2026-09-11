@@ -9,7 +9,7 @@ import SettingsLayout from '@/layouts/settings/layout';
 import PublicLayout from '@/layouts/public-layout';
 import SellerLayout from '@/layouts/seller-layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = 'Louma Guinard';
 
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

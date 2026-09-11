@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import {
     CheckCircle2,
     CircleAlert,
@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
+import PublicSeo from '@/components/public/public-seo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -26,7 +27,11 @@ export default function PublicOrderShow({
 
     return (
         <>
-            <Head title={`Commande ${order.reference}`} />
+            <PublicSeo
+                title={`Commande ${order.reference}`}
+                description="Suivi privé de votre commande Louma Guinard."
+                noIndex
+            />
             <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16 lg:py-20">
                 <Card
                     className={

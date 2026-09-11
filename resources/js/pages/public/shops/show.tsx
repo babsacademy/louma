@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import {
     ArrowLeft,
     CircleAlert,
@@ -12,6 +12,7 @@ import {
 import InputError from '@/components/input-error';
 import ShopAvailabilityBadge from '@/components/public/shop-availability-badge';
 import ShopImage from '@/components/public/shop-image';
+import PublicSeo from '@/components/public/public-seo';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,19 +46,33 @@ export default function PublicShopShow({ shop }: { shop: PublicShop }) {
 
     return (
         <>
-            <Head>
-                <title>{shop.name + ' · Boutique à ' + shop.zone}</title>
-                <meta
-                    name="description"
-                    content={
-                        'Stock, poids et prix des poulets de ' +
-                        shop.name +
-                        ' à ' +
-                        shop.zone +
-                        '.'
-                    }
-                />
-            </Head>
+            <PublicSeo
+                title={`${shop.name} · Poulets à ${shop.zone}`}
+                description={`Stock, poids et prix des poulets de ${shop.name} à ${shop.zone}, Dakar.`}
+                image={shop.image_url}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Store',
+                    name: shop.name,
+                    image: shop.image_url,
+                    address: {
+                        '@type': 'PostalAddress',
+                        addressLocality: shop.zone,
+                        addressRegion: 'Dakar',
+                        addressCountry: 'SN',
+                    },
+                    areaServed: 'Dakar',
+                    offers: {
+                        '@type': 'Offer',
+                        price: shop.unit_price,
+                        priceCurrency: 'XOF',
+                        availability:
+                            shop.stock_quantity > 0
+                                ? 'https://schema.org/InStock'
+                                : 'https://schema.org/OutOfStock',
+                    },
+                }}
+            />
             <div className="mx-auto w-full max-w-7xl bg-white px-4 py-7 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
                 <Link
                     href={shopsIndex.url()}

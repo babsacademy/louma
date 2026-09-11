@@ -8,11 +8,15 @@ use App\Http\Controllers\Admin\SellerPayoutController as AdminSellerPayoutContro
 use App\Http\Controllers\Admin\ShopController;
 use App\Http\Controllers\Public\OrderController as PublicOrderController;
 use App\Http\Controllers\Public\ShopController as PublicShopController;
+use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\Seller\DashboardController as SellerDashboardController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Seller\ShopController as SellerShopController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+Route::get('robots.txt', [SitemapController::class, 'robots'])->name('robots');
+Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/', [PublicShopController::class, 'index'])->name('home');
 Route::get('boutiques', [PublicShopController::class, 'index'])->name('public.shops.index');

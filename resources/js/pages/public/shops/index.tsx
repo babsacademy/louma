@@ -1,8 +1,9 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { MapPin, Search, Store, Truck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import PublicShopCard from '@/components/public/shop-card';
+import PublicSeo from '@/components/public/public-seo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,13 +48,19 @@ export default function PublicShopsIndex({
 
     return (
         <>
-            <Head>
-                <title>Les boutiques de poulet à Dakar</title>
-                <meta
-                    name="description"
-                    content="Trouvez des boutiques de poulet disponibles près de chez vous à Dakar."
-                />
-            </Head>
+            <PublicSeo
+                title="Poulets disponibles à Dakar"
+                description="Trouvez une boutique de poulet à Dakar, consultez le stock, le poids et le prix, puis commandez simplement."
+                noIndex={Boolean(
+                    filters.search || filters.zone || shops.current_page > 1,
+                )}
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'WebSite',
+                    name: 'Louma Guinard',
+                    inLanguage: 'fr-SN',
+                }}
+            />
             <section className="border-b border-amber-600 bg-amber-500">
                 <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
                     <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
