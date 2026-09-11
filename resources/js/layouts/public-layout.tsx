@@ -187,16 +187,6 @@ export default function PublicLayout({
                                 Babsacademy
                             </a>
                         </p>
-                        <p>
-                            <a
-                                href="https://babsacademy.com/"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-stone-400 underline-offset-4 transition-colors hover:text-amber-300 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
-                            >
-                                Babsacademy.com
-                            </a>
-                        </p>
                     </div>
                 </div>
             </footer>
