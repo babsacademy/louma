@@ -149,7 +149,7 @@ export default function ShopZoneMap({ shops }: { shops: PublicShop[] }) {
                 new maplibregl.NavigationControl(),
                 'top-right',
             );
-            mapInstance.on('load', () => {
+            mapInstance.once('style.load', () => {
                 const bounds = new maplibregl.LngLatBounds();
 
                 markers.forEach((marker) => {
