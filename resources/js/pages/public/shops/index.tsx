@@ -171,7 +171,6 @@ export default function PublicShopsIndex({
                     </div>
                 </div>
             </section>
-            <ShopZoneMap shops={mapShops} />
             <section
                 id="boutiques"
                 className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
@@ -252,6 +251,7 @@ export default function PublicShopsIndex({
                     </nav>
                 ) : null}
             </section>
+            <ShopZoneMap shops={mapShops} />
         </>
     );
 }
