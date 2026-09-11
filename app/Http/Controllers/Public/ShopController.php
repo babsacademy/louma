@@ -37,9 +37,16 @@ class ShopController extends Controller
             ->orderBy('zone')
             ->pluck('zone');
 
+        $mapShops = $this->publicShops()
+            ->orderBy('zone')
+            ->orderBy('name')
+            ->get()
+            ->map(fn (Shop $shop) => $this->shopData($shop));
+
         return Inertia::render('public/shops/index', [
             'shops' => $shops,
             'zones' => $zones,
+            'mapShops' => $mapShops,
             'filters' => [
                 'search' => $search,
                 'zone' => $zone,

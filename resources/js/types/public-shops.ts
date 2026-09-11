@@ -20,5 +20,6 @@ export interface PublicShopFilters {
 export interface PublicShopPageProps {
     shops: PaginatedData<PublicShop>;
     zones: string[];
+    mapShops: PublicShop[];
     filters: PublicShopFilters;
 }

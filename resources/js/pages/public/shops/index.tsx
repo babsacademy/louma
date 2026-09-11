@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import PublicShopCard from '@/components/public/shop-card';
 import PublicSeo from '@/components/public/public-seo';
+import ShopZoneMap from '@/components/public/shop-zone-map';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,7 @@ import { index as shopsIndex } from '@/routes/public/shops';
 export default function PublicShopsIndex({
     shops,
     zones,
+    mapShops,
     filters,
 }: PublicShopPageProps) {
     const [search, setSearch] = useState(filters.search);
@@ -169,6 +171,7 @@ export default function PublicShopsIndex({
                     </div>
                 </div>
             </section>
+            <ShopZoneMap shops={mapShops} />
             <section
                 id="boutiques"
                 className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16"

@@ -23,8 +23,11 @@ test('guests can browse active shops without private seller data', function () {
             ->has('shops.data', 1)
             ->where('shops.data.0.name', $activeShop->name)
             ->where('shops.data.0.unit_price', 3250)
+            ->has('mapShops', 1)
+            ->where('mapShops.0.name', $activeShop->name)
             ->missing('shops.data.0.seller_id')
-            ->missing('shops.data.0.image_path'));
+            ->missing('shops.data.0.image_path')
+            ->missing('mapShops.0.seller_id'));
 });
 
 test('the marketplace search and zone filter are server-side and combinable', function () {
@@ -36,6 +39,7 @@ test('the marketplace search and zone filter are server-side and combinable', fu
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('shops.data', 1)
+            ->has('mapShops', 2)
             ->where('shops.data.0.name', 'Ferme Almadies')
             ->where('filters.search', 'Ferme')
             ->where('filters.zone', 'Almadies'));
