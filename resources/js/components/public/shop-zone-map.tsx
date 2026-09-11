@@ -192,7 +192,10 @@ export default function ShopZoneMap({ shops }: { shops: PublicShop[] }) {
                 });
             })
             .catch((error: unknown) => {
-                console.error('Impossible de charger la carte des boutiques.', error);
+                console.error(
+                    'Impossible de charger la carte des boutiques.',
+                    error,
+                );
             });
 
         return () => {
