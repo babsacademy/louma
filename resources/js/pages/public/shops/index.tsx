@@ -58,7 +58,7 @@ export default function PublicShopsIndex({
                 <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-20">
                     <div className="grid items-end gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
                         <div>
-                            <p className="mb-4 text-sm font-semibold tracking-[0.16em] text-amber-950 uppercase">
+                            <p className="mb-4 text-sm font-semibold tracking-[0.16em] text-white uppercase">
                                 Marketplace locale · Dakar
                             </p>
                             <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl lg:text-6xl lg:leading-[1.04]">
