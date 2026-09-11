@@ -24,6 +24,7 @@ const zoneCoordinates: Record<string, Coordinates> = {
     dakar: dakarCenter,
     'grand yoff': [14.7444, -17.4443],
     mamelles: [14.7321, -17.5024],
+    mermoz: [14.7105, -17.4857],
     ouakam: [14.7214, -17.4902],
     'parcelles assainies': [14.7565, -17.4334],
     plateau: [14.6677, -17.4353],
